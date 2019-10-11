@@ -6,56 +6,14 @@ output:
     df_print: paged
 ---
 
-# <style="color: #66B2FF;">Introduction</ style>
+## Abstract
 
-### Hello
-  Hello my name is Austin Meyer. For my Data Science course at CSU Chico I wanted to investigate data from the US about the economy and politics. I chose this area because, it 
+The project is in its infancey. The work that has been done so far is finding and cleaning the initial data. Another aspect of progress is to formulate aa reaserch question.
 
-### Chosen Data Set
-  The dataset has been acquired from [FiveThirtyEight]("https://projects.fivethirtyeight.com/2018-midterm-election-forecast/house/#history") an ABC company. By the looks of their data they have a left tilt when looking for data to showcase. How I justified this assumption is based on how many political data sets they started working with from their inseption in 2014 up to 2016. Then how many political data sets they started working with after the election on 2016.The data set I found is polling data, which means only people who want to take the poll have been recorded. With that in mind lets move on to some clearifications in the data.
+### 1. Discovery and Data Preparation
+
+Provide a one-sentence introduction with what is covered by the first deliverable along with a link to another html page that gives the details.
   
-### What Do These Columns Mean
-
-  Some of the columns in this data may be confusing, at least some where too me. The columns that make up most of the confusion are the p10_voteshare and p90_voteshare. I looked it up and found a pretty good article that explanes it better than I can: [What is p10 and p90 mean]("https://blogs.dnvgl.com/software/2016/12/p10-p50-and-p90/"). In the case of our data a p10 voteshare means that 10% of the vote share will exceed x (x being the number). A p90 discribes that 90% of the voteshare will exceed this value.
-  
-  Forcast date is when the election was supposed to take place, which has already happened.
-  
-  State is straight forward. It is the state in which the canadite was running.
-  
-  District is similar to state. This is the district in which the canadite was running.
-  
-  There were a few special elections and this tag would describe those elections.
-
-
-# Getting Started With Data Cleaning
-
-### Download packages
-
-  First we will download necessary packages to recreate the data sets I will have and be investigating. We will be first installing the wonderful tidyverse. The tidyverse package will help us bring order too messed up data.
-```{r}
-install.packages("tidyverse")
-library("tidyverse")
-```
-
-
-  In all honesty I have forgotten what these do come back to them.
-```{r}
-library("tidyr")
-library("dplyr")
-library("readr")
-```
-
-
-### Loading The Data
-
-  Finally we get to load the data into our Rstudio set up. If you don't already have R and Rstudio please follow these two links and follow their download processes:
-  * [R download (The langauge library)]("https://cran.r-project.org/mirrors.html")
-    + Don't be afraid of all the links, just scroll down to one nearest to you
-  *[Rstudio download]("https://rstudio.com/products/rstudio/download/#download")
-  
-  Now were ready to move on to downloading the data.The line bellow will turn the data into R readable data.
-```{r}
-national_data <- read_csv("https://projects.fivethirtyeight.com/congress-model-2018/house_district_forecast.csv")
 
 ### 2. Model Planning and Building
 

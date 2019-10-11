@@ -5,7 +5,7 @@ date: "10/10/2019"
 output: html_document
 ---
 
-# <style="color: #66B2FF;">Introduction</ style>
+# Introduction
 
 ### Hello
   Hello my name is Austin Meyer. For my Data Science course at CSU Chico I wanted to investigate data from the US about the economy and politics. I chose this area because, it 
@@ -15,15 +15,15 @@ output: html_document
   
 ### What Do These Columns Mean
 
-  Some of the columns in this data may be confusing, at least some where too me. The columns that make up most of the confusion are the p10_voteshare and p90_voteshare. I looked it up and found a pretty good article that explanes it better than I can: [What is p10 and p90 mean]("https://blogs.dnvgl.com/software/2016/12/p10-p50-and-p90/"). In the case of our data a p10 voteshare means that 10% of the vote share will exceed x (x being the number). A p90 discribes that 90% of the voteshare will exceed this value.
+  Some of the columns in this data may be confusing, at least some where too me. The columns that make up most of the confusion are the p10_voteshare and p90_voteshare. I looked it up and found a pretty good article that explanes it better than I can: [What do p10 and p90 mean]("https://blogs.dnvgl.com/software/2016/12/p10-p50-and-p90/"). In the case of our data a p10 voteshare means that 10% of the vote share will exceed x (x being the number). A p90 discribes that 90% of the voteshare will exceed this value.
   
-  Forcast date is when the election was supposed to take place, which has already happened.
+  * Forcast date is when the election was supposed to take place, which has already happened.
   
-  State is straight forward. It is the state in which the canadite was running.
+  * State is straight forward. It is the state in which the canadite was running.
   
-  District is similar to state. This is the district in which the canadite was running.
+  * District is also straight forward. This is the district in which the canadite was running in a certian state.
   
-  There were a few special elections and this tag would describe those elections.
+  * The special elections column will be TRUE if a special election happend that election.
 
 
 # Getting Started With Data Cleaning
@@ -32,7 +32,7 @@ output: html_document
 
   First we will download necessary packages to recreate the data sets I will have and be investigating. We will be first installing the wonderful tidyverse. The tidyverse package will help us bring order too messed up data.
 ```{r}
-install.packages("tidyverse")
+#install.packages("tidyverse")
 library("tidyverse")
 ```
 
@@ -55,3 +55,19 @@ library("readr")
   Now were ready to move on to downloading the data.The line bellow will turn the data into R readable data.
 ```{r}
 national_data <- read_csv("https://projects.fivethirtyeight.com/congress-model-2018/house_district_forecast.csv")
+```
+
+Looking over the data there are a few things we need to clean up. One of those is to make sure the time is in POSIX time, which is just a standardized way of writing time. If we varifiy that it is POSIX everyone who uses this investigation will know what the date is. To do this we use these two commands. One is to turn it into a sentance and the other will go through to find this form and turn in into POSIX time.
+```{r}
+national_data$forecastdate <- as.character(national_data$forecastdate)
+
+national_data$forecastdate <- as.POSIXlt(parse_datetime(national_data$forecastdate, format="%Y-%m-%d"))
+```
+
+We also need to remove the models column. It is used specifically for the website that the data was pulled from. We will do this by selecting everything, but the model column.
+```{r}
+national_data <- select (national_data,-c(model))
+```
+
+
+
