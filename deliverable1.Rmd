@@ -1,5 +1,5 @@
 ---
-title: "deliverable1"
+title: "Discovery and Data Preperation"
 author: "Austin Meyer"
 date: "10/10/2019"
 output: html_document

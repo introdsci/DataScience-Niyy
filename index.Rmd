@@ -12,7 +12,7 @@ The project is in its infancey. The work that has been done so far is finding an
 
 ### 1. Discovery and Data Preparation
 
-The beginning of the project I found a data set, cleaned the data, and formulated a few reaserch questions to guide my out reaserch.
+The beginning of the project I found a data set, cleaned the data, and formulated a few reaserch questions to guide my out reaserch. [Part One](deliverable1.html)
   
 
 ### 2. Model Planning and Building
