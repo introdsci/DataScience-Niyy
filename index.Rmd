@@ -8,11 +8,11 @@ output:
 
 ## Abstract
 
-The project is in its infancey. The work that has been done so far is finding and cleaning the initial data. Another aspect of progress is to formulate aa reaserch question.
+The project is in its infancey. The work that has been done so far is finding and cleaning the initial data. Another aspect of progress is to formulation of reaserch questions.
 
 ### 1. Discovery and Data Preparation
 
-Provide a one-sentence introduction with what is covered by the first deliverable along with a link to another html page that gives the details.
+The beginning of the project I found a data set, cleaned the data, and formulated a few reaserch questions to guide my out reaserch.
   
 
 ### 2. Model Planning and Building

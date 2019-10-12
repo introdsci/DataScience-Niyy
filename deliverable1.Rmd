@@ -8,10 +8,12 @@ output: html_document
 # Introduction
 
 ### Hello
-  Hello my name is Austin Meyer. For my Data Science course at CSU Chico I wanted to investigate data from the US about the economy and politics. I chose this area because, it 
+
+  Hello my name is Austin Meyer. For my Data Science course at CSU Chico I wanted to investigate data from the United States about the economy and politics. I chose this area because, it interests me and is everywhere in our daily lives.
 
 ### Chosen Data Set
-  The dataset has been acquired from [FiveThirtyEight]("https://projects.fivethirtyeight.com/2018-midterm-election-forecast/house/#history") an ABC company. By the looks of their data they have a left tilt when looking for data to showcase. How I justified this assumption is based on how many political data sets they started working with from their inseption in 2014 up to 2016. Then how many political data sets they started working with after the election on 2016.The data set I found is polling data, which means only people who want to take the poll have been recorded. With that in mind lets move on to some clearifications in the data.
+
+  The dataset has been acquired from [FiveThirtyEight]("https://projects.fivethirtyeight.com/2018-midterm-election-forecast/house/#history") an ABC company. By the looks of their data they have a left tilt when looking for data to investigate. How I justified this assumption is based on how many political data sets they started working with from their inseption in 2014 up to 2016. Then how many political data sets they started working with after the election of 2016. The data set I found is polling data, which means only people who want to take the poll have been recorded. With that in mind lets move on to some clearifications in the data.
   
 ### What Do These Columns Mean
 
@@ -72,11 +74,28 @@ national_data <- select (national_data,-c(model))
 incumbent_chances <- tibble(candidate=national_data$candidate[national_data$incumbent == TRUE], win_probability=national_data$win_probability[national_data$incumbent == TRUE], voteshare=national_data$voteshare[national_data$incumbent == TRUE])
 ```
 
-  Next I greated a histograph, which shows use were the voteshares fall for the incumbents.
+  Next we will make a histograph, which shows use were the voteshares fall for the incumbents.
 ```{r}
-visualIncumbent + geom_histogram(bins = 100)
+filter(national_data, (incumbent == TRUE)) %>% ggplot(aes(voteshare)) + geom_histogram(bins = 100)
 ```
 
-  This graph tells us a lot about how incumbents faired in the last election. Many of them had above 50% of the vote shares. The real question though is what keeps them in office. Is it a lack of a better candidate or are they representinng their districts well.
+  This graph tells us a lot about the probability of incumbents faired in the last election. Many of them had above 50% of the vote shares. The real question though is what keeps them in office. Is it a lack of a better candidate or are they representinng their districts well.
 
+  The next graph we will look at the non-incumbents. Since the probability of the incumbents is above fifty, the non-incumbent probability will be the latter half of that.
+```{r}
+filter(national_data, (incumbent == FALSE)) %>% ggplot(aes(voteshare)) + geom_histogram(bins = 100)
+```
 
+As we expected the non-incumbents voteshare is below the 50% mark. Most of the non-incumbants had below a 10% predicted rate of winning any races.
+
+# The Question
+
+Now to lay out the questions I will be seeking to answer in my reaserch:
+
+* As a nation, why do we continue to vote in the same politicians. 
+* What qualities or events cause non-incumbents to have a low probability of winning. 
+* Being a midterm election, how much did the president's actions influence was the president in the elections.
+
+## And the Adventure Begins
+
+  The data that I have chosen is just a launch pad for our investigation into our elections and why we vote the way we do.
