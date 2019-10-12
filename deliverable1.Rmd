@@ -32,16 +32,16 @@ output: html_document
 
   First we will download necessary packages to recreate the data sets I will have and be investigating. We will be first installing the wonderful tidyverse. The tidyverse package will help us bring order too messed up data.
 ```{r}
-#install.packages("tidyverse")
+# These three will import many of the commands we will use to clean our data
+# install.packages("tidyverse")
 library("tidyverse")
-```
-
-
-  In all honesty I have forgotten what these do come back to them.
-```{r}
 library("tidyr")
+# Will help us in manipulating our datasets
 library("dplyr")
+# Helps us read files from the web
 library("readr")
+# This library will help us visualize the data
+library("ggplot2")
 ```
 
 
@@ -57,17 +57,26 @@ library("readr")
 national_data <- read_csv("https://projects.fivethirtyeight.com/congress-model-2018/house_district_forecast.csv")
 ```
 
-Looking over the data there are a few things we need to clean up. One of those is to make sure the time is in POSIX time, which is just a standardized way of writing time. If we varifiy that it is POSIX everyone who uses this investigation will know what the date is. To do this we use these two commands. One is to turn it into a sentance and the other will go through to find this form and turn in into POSIX time.
-```{r}
-national_data$forecastdate <- as.character(national_data$forecastdate)
+Looking over the data there are a few things we need to clean up. One of those is to make sure the time is in POSIX time, which is just a standardized way of writing time.Luckly the date is already in the form we desire.
 
-national_data$forecastdate <- as.POSIXlt(parse_datetime(national_data$forecastdate, format="%Y-%m-%d"))
-```
 
 We also need to remove the models column. It is used specifically for the website that the data was pulled from. We will do this by selecting everything, but the model column.
 ```{r}
 national_data <- select (national_data,-c(model))
 ```
 
+# Early Assessment and Visualization
+
+  The first questions I had when looking at this data is: What were the probable vote shares of incumbent canadites. First I had to create a new table that was filled with just the incubents.
+```{r}
+incumbent_chances <- tibble(candidate=national_data$candidate[national_data$incumbent == TRUE], win_probability=national_data$win_probability[national_data$incumbent == TRUE], voteshare=national_data$voteshare[national_data$incumbent == TRUE])
+```
+
+  Next I greated a histograph, which shows use were the voteshares fall for the incumbents.
+```{r}
+visualIncumbent + geom_histogram(bins = 100)
+```
+
+  This graph tells us a lot about how incumbents faired in the last election. Many of them had above 50% of the vote shares. The real question though is what keeps them in office. Is it a lack of a better candidate or are they representinng their districts well.
 
 
