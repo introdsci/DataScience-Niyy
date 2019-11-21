@@ -5,6 +5,49 @@ date: "10/10/2019"
 output: html_document
 ---
 
+# Start with the past
+  
+  Before we go forward with gathering more data we must first load what we did from the last part of our journey.
+  
+```{r echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='hide'}
+include <- function(library_name){
+  if( !(library_name %in% installed.packages()) )
+    install.packages(library_name) 
+  library(library_name, character.only=TRUE)
+}
+include("tidyverse")
+include("knitr")
+include("caret")
+include("rvest")
+purl("deliverable1.Rmd", output = "part1.r")
+source("part1.r")
+```
+
 # Time to add more data
 
   To start this part of my investigation I will be looking for another data set to supplement our previous data set. The catch to this one is that it will be from another source.
+  
+```{r}
+read_election_outcome <- function(url) {
+  
+  html_full <- read_html(url)
+  
+  outcome <- html_full %>% html_nodes("tbody")
+
+  percent_won <-  outcome %>%
+                  html_nodes("span.eln-percent") %>%
+                  html_text()
+  candid_name <- outcome %>%
+                  html_nodes("span.eln-name") %>%
+                  html_text()
+  party <- outcome %>%
+                  html_nodes("span.eln-party") %>%
+                  html_text()
+  
+  results <- tibble( percent_won=percent_won, candidite_name=candid_name, party=party)
+}
+
+
+# Then using the funciton we made above, we will gather the data from the website.
+election_result <- read_election_outcome(url = "https://www.nytimes.com/interactive/2018/11/06/us/elections/results-house-elections.html")
+```
