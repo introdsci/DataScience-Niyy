@@ -1,0 +1,10 @@
+---
+title: "Model Planning and Building"
+author: "Austin Meyer"
+date: "10/10/2019"
+output: html_document
+---
+
+# Time to add more data
+
+  To start this part of my investigation I will be looking for another data set to supplement our previous data set. The catch to this one is that it will be from another source.
