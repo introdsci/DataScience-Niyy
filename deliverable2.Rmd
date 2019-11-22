@@ -48,6 +48,29 @@ read_election_outcome <- function(url) {
 }
 
 
+read_congress_approval <- function(url)
+{
+  html_full <- read_html(url)
+  
+  outcome <- html_full %>% html_nodes("table.summary-20181115144005")
+  
+  poll_date <- outcome %>%
+                html_nodes("td.row") %>%
+                html_text()
+  
+  poll_deserve <- outcome %>%
+                html_nodes("td.'Yes, deserves'") %>%
+                html_text()
+  
+  poll_not_deserve <- outcome %>%
+                html_nodes("td.'No, does not") %>%
+                html_text()
+  
+  results <- tibble(poll_date=poll_date, poll_deserve=poll_deserve, poll_not_deserve=poll_not_deserve)
+}
+
+
 # Then using the funciton we made above, we will gather the data from the website.
 election_result <- read_election_outcome(url = "https://www.nytimes.com/interactive/2018/11/06/us/elections/results-house-elections.html")
+congress_approval <- read_congress_approval(url = "https://news.gallup.com/poll/1600/congress-public.aspx")
 ```
