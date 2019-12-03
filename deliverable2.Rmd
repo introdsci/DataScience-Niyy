@@ -25,7 +25,9 @@ source("part1.r")
 
 # Time to add more data
 
-  To start this part of my investigation I will be looking for another data set to supplement our previous data set. The catch to this one is that it will be from another source.
+  To start this part of my investigation I will be looking for another data set to supplement our previous data set. The catch to this one is that it will be from another source.Two parts of the data will be from Gallup. These two polls will help us figure out what people are thinking when choosing candidets. The other is from the NYTimes and gives us the results of the election so that we can reference it through out the report.
+  
+  Before we go into our models we must first make functions to easily grab and sort our data.
   
 ```{r}
 read_election_outcome <- function(url) {
@@ -47,30 +49,71 @@ read_election_outcome <- function(url) {
   results <- tibble( percent_won=percent_won, candidite_name=candid_name, party=party)
 }
 
-
-read_congress_approval <- function(url)
+read_congress_approval <- function(url, div)
 {
   html_full <- read_html(url)
   
-  outcome <- html_full %>% html_nodes("td:nth-child(2)")
+  outcome <- html_full %>% html_node(div)
+  tbody_data <- outcome %>% html_nodes("tbody")
+  tr_data <- tbody_data %>% html_nodes("tr")
   
-  poll_date <- outcome %>%
-                html_nodes("td") %>%
+  poll_date <- tbody_data %>%
+                html_nodes("th[scope=row]") %>%
                 html_text()
   
-  poll_deserve <- outcome %>%
-                html_nodes("tr.'Yes, deserves'") %>%
+  approve <- tbody_data %>%
+                html_nodes("td[data-th='Yes, deserves']") %>%
                 html_text()
   
-  poll_not_deserve <- outcome %>%
-                html_nodes("tr.'No, does not") %>%
+  disapprove <- outcome %>%
+                html_nodes("td[data-th='No, does not']") %>%
                 html_text()
   
-  results <- tibble(poll_date=poll_date, poll_deserve=poll_deserve, poll_not_deserve=poll_not_deserve)
+  no_opinion <- outcome %>%
+                html_nodes("td[data-th='No opinion']") %>%
+                html_text()
+  
+  results <- tibble(poll_date=poll_date, approve=approve, disapprove=disapprove, no_opinion=no_opinion)
 }
 
+```
 
+  After initializing our helpers we can now use them to gather our data from the websites as seen bellow.
+
+```{r}
 # Then using the funciton we made above, we will gather the data from the website.
 election_result <- read_election_outcome(url = "https://www.nytimes.com/interactive/2018/11/06/us/elections/results-house-elections.html")
-congress_approval <- read_congress_approval(url = "https://news.gallup.com/poll/1600/congress-public.aspx")
+other_congress_feels <- read_congress_approval(url = "https://news.gallup.com/poll/1600/congress-public.aspx", div = "div#ite-235073")
+your_congress_feels <- read_congress_approval(url = "https://news.gallup.com/poll/1600/congress-public.aspx", div = "div#ite-235070")
+```
+
+# Clean up
+
+  The only item that looks like it needs a good scrubing is the date. So we are going to turn it into POSIX standard time so that when we work with the data we will not get confused and it is all standardized. To make the dates simpler we are going to only record the date when the poll started polling.
+  
+```{r}
+your_congress_feels$poll_date <- sub("-.*", "", your_congress_feels$poll_date)
+other_congress_feels$poll_date <- sub("-.*", "", other_congress_feels$poll_date)
+
+# Row 42 has an issue and doesn't follow the same format as the others.
+# We are going to have to change it manually
+other_congress_feels$poll_date[other_congress_feels$poll_date == "1992 Jul 31 Aug 2"] <- strtrim("1992 Jul 31 Aug 2", nchar("1992 Jul 31 Aug 2")-6)
+
+your_congress_feels$poll_date <- as.POSIXlt(parse_datetime(your_congress_feels$poll_date, format="%Y %b %d", locale = locale("en")))
+other_congress_feels$poll_date <- as.POSIXlt(parse_datetime(other_congress_feels$poll_date, format="%Y %b %d", locale = locale("en")))
+```
+
+  Also found some areas were our data could be cleaned better. We should first turn the states and districts into factors.
+```{r}
+national_data$state <- as.factor(national_data$state)
+national_data$district <- as.factor(national_data$district)
+```
+
+# Modeling data
+
+  Now that we have acquired our secondary data sources we must now seek out correlations in our data. To do this we will be using the lm function. This makes it easier for us to model data. We will only need the original data set to do this.I want to first model what corelations can be made with the win_probability and the other variables from the national_data set.
+  
+```{r}
+model <- lm(national_data, formula=win_probability~state+district+party+incumbent)
+summary(model)
 ```
