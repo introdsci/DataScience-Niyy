@@ -5,9 +5,9 @@ date: "10/10/2019"
 output: html_document
 ---
 
-# Start with the past
+## Start with the past
   
-  Before we go forward with gathering more data we must first load what we did from the last part of our journey.
+  Before we go forward with gathering more data we must first load what we did from the last part of our journey. You will not see this because I am hidding it from you, but if you test at home you will see it.
   
 ```{r echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='hide'}
 include <- function(library_name){
@@ -19,11 +19,12 @@ include("tidyverse")
 include("knitr")
 include("caret")
 include("rvest")
+include("hexbin")
 purl("deliverable1.Rmd", output = "part1.r")
 source("part1.r")
 ```
 
-# Time to add more data
+## Time to add more data
 
   To start this part of my investigation I will be looking for another data set to supplement our previous data set. The catch to this one is that it will be from another source.Two parts of the data will be from Gallup. These two polls will help us figure out what people are thinking when choosing candidets. The other is from the NYTimes and gives us the results of the election so that we can reference it through out the report.
   
@@ -87,7 +88,7 @@ other_congress_feels <- read_congress_approval(url = "https://news.gallup.com/po
 your_congress_feels <- read_congress_approval(url = "https://news.gallup.com/poll/1600/congress-public.aspx", div = "div#ite-235070")
 ```
 
-# Clean up
+## Clean up
 
   The only item that looks like it needs a good scrubing is the date. So we are going to turn it into POSIX standard time so that when we work with the data we will not get confused and it is all standardized. To make the dates simpler we are going to only record the date when the poll started polling.
   
@@ -114,6 +115,37 @@ national_data$district <- as.factor(national_data$district)
   Now that we have acquired our secondary data sources we must now seek out correlations in our data. To do this we will be using the lm function. This makes it easier for us to model data. We will only need the original data set to do this.I want to first model what corelations can be made with the win_probability and the other variables from the national_data set.
   
 ```{r}
-model <- lm(national_data, formula=win_probability~state+district+party+incumbent)
-summary(model)
+national_model <- lm(national_data, formula=win_probability~state+district+party+incumbent)
+summary(national_model)
 ```
+  Now we want to see if the data we chose will be a good model to use in our analysis. To do this we will grab a random amount of data from the set and call it our trained set. This set will be used to see if it can predict the other 30% of the data we did not grab. 
+
+```{r}
+set.seed(4567)
+
+index <- createDataPartition(national_data$win_probability, p = 0.70, list=FALSE)
+
+train <- national_data[index, ]
+test <- national_data[-index, ]
+
+train_model <- lm(train, formula=win_probability~state+district+party+incumbent)
+summary(train_model)
+```
+
+  Now that we have our trained set we need to see how it predicts the next set, and graph the results with the actual data. First we must talk about the lost rows. I believe these rows were lost do to certain candiadtes not having a party, or to many dots were placed on the same position. 
+  Based on our predictions we can conclud that the columns we chose do help in predicting the winner of an election. When win probability is 1.00 so is national_predictions majority of the time.
+  
+  Of course predict is not always right. Some predicitons predict a winner, but they actually lose based on our models data. Some predictors such as states and districts probably confuse the prediction.
+  
+```{r}
+national_predictions <- predict(train_model, test)
+ggplot(data=test, aes(x=national_predictions, y=win_probability )) + geom_point(alpha = 0.01)
+```
+
+## Conclusion
+
+  The model developed above shows that we can predict the outcome of an election with some certainty, but not a whole lot. Even though the p values of our variables are very low, the R-squared value is also low. This draws my conclusion on this model that we could use another set of our data to use as varibles.
+  
+  On the other hand the varible that I thought would be the most meaning full was if the congress person was an incumbant or not. This was not the case. The incumbancy is still valuable, but not as many of the others, such as certain states and districts.
+  
+  This may help me discover what actually has us choosing the same congress people over and over again the next time.

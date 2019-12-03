@@ -17,7 +17,7 @@ The beginning of the project I found a data set, cleaned the data, and formulate
 
 ### 2. Model Planning and Building
 
-Coming soon...
+Here we plan and devise our models. We also test one to see if it could be used in our results. [Part Two](deliverable2.html)
 
 ### 3. Results and Operationalization
 
