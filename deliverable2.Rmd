@@ -52,18 +52,18 @@ read_congress_approval <- function(url)
 {
   html_full <- read_html(url)
   
-  outcome <- html_full %>% html_nodes("table.summary-20181115144005")
+  outcome <- html_full %>% html_nodes("td:nth-child(2)")
   
   poll_date <- outcome %>%
-                html_nodes("td.row") %>%
+                html_nodes("td") %>%
                 html_text()
   
   poll_deserve <- outcome %>%
-                html_nodes("td.'Yes, deserves'") %>%
+                html_nodes("tr.'Yes, deserves'") %>%
                 html_text()
   
   poll_not_deserve <- outcome %>%
-                html_nodes("td.'No, does not") %>%
+                html_nodes("tr.'No, does not") %>%
                 html_text()
   
   results <- tibble(poll_date=poll_date, poll_deserve=poll_deserve, poll_not_deserve=poll_not_deserve)
