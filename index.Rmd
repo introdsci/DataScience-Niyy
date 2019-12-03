@@ -1,5 +1,5 @@
 ---
-title: "Assessing the House Election of 2020" #replace the title with something short and catchy to represent your project
+title: "Assessing the House Election of 2018" #replace the title with something short and catchy to represent your project
 subtitle: "Austin's Data Science Portfolio" #replace blank with your name
 output:
   html_document:
