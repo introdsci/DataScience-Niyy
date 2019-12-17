@@ -1,0 +1,18 @@
+---
+title: "Results and Operationalization"
+author: "Austin Meyer"
+date: "12/19/2019"
+output: html_document
+---
+
+## Get up to speed
+
+  As we did in our second entry we must gather what we have done in the previous two entrys. We will again run our script here to make that happen.
+  
+```{r echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='hide'}
+install.packages("tidyverse")
+library(tidyverse)
+
+purl("deliverable2.Rmd", output = "part2.r")
+source("part2.r")
+```
