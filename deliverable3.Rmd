@@ -10,9 +10,76 @@ output: html_document
   As we did in our second entry we must gather what we have done in the previous two entrys. We will again run our script here to make that happen.
   
 ```{r echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results='hide'}
-install.packages("tidyverse")
-library(tidyverse)
+include <- function(library_name){
+  if( !(library_name %in% installed.packages()) )
+    install.packages(library_name) 
+  library(library_name, character.only=TRUE)
+}
+include("tidyverse")
+include("knitr")
 
 purl("deliverable2.Rmd", output = "part2.r")
 source("part2.r")
 ```
+  Also found some cleaning. Since we did not plan to use the other tables in the section I did not look at how the data was stored in a tibble. We have to make sure those percents are turned into numbers not chars.
+```{r}
+other_congress_feels$approve <- as.numeric(other_congress_feels$approve)
+other_congress_feels$disapprove <- as.numeric(other_congress_feels$disapprove)
+other_congress_feels$no_opinion <- as.numeric(other_congress_feels$no_opinion)
+
+your_congress_feels$approve <- as.numeric(your_congress_feels$approve)
+your_congress_feels$disapprove <- as.numeric(your_congress_feels$disapprove)
+your_congress_feels$no_opinion <- as.numeric(your_congress_feels$no_opinion)
+```
+
+ Good! Now we can move forward and asses our model from section 2.
+ 
+## The results
+ 
+  One of the major findings that was not modeled, but is the table about how people felt about the state of congress at that time. First we have to do a little fanagling with the time as it needs to be in a certain time.
+  
+```{r}
+your_congress_feels$poll_date <- as.POSIXct(your_congress_feels$poll_date)
+other_congress_feels$poll_date <- as.POSIXct(your_congress_feels$poll_date)
+```
+
+  Now that we put the time in a format that we can display in a graph lets display it.
+```{r}
+ggplot(data=your_congress_feels, aes(x=poll_date, y=approve)) + geom_point(aes(x=poll_date, y=approve, colour="Your Congress Person")) + geom_point(aes(x=other_congress_feels$poll_date, y=other_congress_feels$approve, colour="Congress")) + labs(x="Approximate Poll Date", y="Approval of Congress (%)")
+```
+
+  This data comes from the the data we collected last time. As we know they were both taken from gallup polls. Polls can be sketchy due to the pool size and what type of people they pull. What should give us pause is that this is over the course of 2 decades and all the people who partook in the first poll may not have taken part in the rest of the polls. Taking each poll with a grain of salt.
+  
+  Next we are going to make another model about this very graph to see if how you feel about your congress person corelates with the congress as a whole. By the graph we can make a pretty good guess that they do corelate.
+
+```{r}
+whole_congress_feels_model <- lm(other_congress_feels, formula=approve~your_congress_feels$approve)
+summary(whole_congress_feels_model)
+```
+
+  As we would exp
+
+## Closing time
+
+### Revist the questions
+
+  To remind us of what we were seeking out to do lets list out our questions:
+* As a nation, why do we continue to vote in the same politicians. 
+* What qualities or events cause non-incumbents to have a low probability of winning. 
+* Being a midterm election, how much did the president's actions influence was the president in the elections.
+
+The question that we have came closer to answering is: As a nation, why do we continue to vote for the same politicians. Well by these polls it would show that people from the poll like their congress people. As of 2000 all the approval rates have been steadly dropping. People still approve of their congress person around the 50% mark, which makes sense since they voted for them.
+
+### Why we should care
+
+  The graph above tells us a lot of the state of the country, but what I am more interested about is that the precentage of people approving of their own congress person is teatering around 50%. I want to know if this is how new party systems are born. We have had the same parties for about 100 years now, but it has not alway been this way. When this country was founded there were the federalist and the anti-federalists. Parties fit the times they live in and will secumb to irrelevance as new parties take there place. Each new party brings with them bits and pieces of previous parties.
+  
+### Operationalization
+
+  Now what are we going to do after all this reaserch. I would say the first thing we could think about doing is forming new parties, breaking the status quo of our stationary parties of old. They are growing old and rusty. In my opinion we should create three or four new parties, but that is not up to just me. Parties if they choose to exist are a gathering of people with similar goals and ideals. We have 329,064,917 people living in the USA and only about 23,191,876 in 1850. That is a lot of people that probably do not have the same exact opinions on how the federal government should be run.
+  
+### Social Impact
+
+  A negative social impact of this data shows that we don't like other peoples decisions on their congress person. This could work further to create a more of a devide between parties.
+
+  
