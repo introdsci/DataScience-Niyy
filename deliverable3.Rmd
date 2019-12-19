@@ -30,9 +30,12 @@ other_congress_feels$no_opinion <- as.numeric(other_congress_feels$no_opinion)
 your_congress_feels$approve <- as.numeric(your_congress_feels$approve)
 your_congress_feels$disapprove <- as.numeric(your_congress_feels$disapprove)
 your_congress_feels$no_opinion <- as.numeric(your_congress_feels$no_opinion)
+
+your_congress_feels
+other_congress_feels
 ```
 
- Good! Now we can move forward and asses our model from section 2.
+ Good! Now we can move forward and assess our model from section 2.
  
 ## The results
  
@@ -45,7 +48,7 @@ other_congress_feels$poll_date <- as.POSIXct(your_congress_feels$poll_date)
 
   Now that we put the time in a format that we can display in a graph lets display it.
 ```{r}
-ggplot(data=your_congress_feels, aes(x=poll_date, y=approve)) + geom_point(aes(x=poll_date, y=approve, colour="Your Congress Person")) + geom_point(aes(x=other_congress_feels$poll_date, y=other_congress_feels$approve, colour="Congress")) + labs(x="Approximate Poll Date", y="Approval of Congress (%)")
+ggplot(data=your_congress_feels, aes(x=poll_date, y=approve)) + geom_point(aes(x=poll_date, y=approve, color="Your Congress Person")) + geom_point(aes(x=other_congress_feels$poll_date, y=other_congress_feels$approve, color="Congress")) + labs(x="Approximate Poll Date", y="Approval of Congress (%)")
 ```
 
   This data comes from the the data we collected last time. As we know they were both taken from gallup polls. Polls can be sketchy due to the pool size and what type of people they pull. What should give us pause is that this is over the course of 2 decades and all the people who partook in the first poll may not have taken part in the rest of the polls. Taking each poll with a grain of salt.
@@ -57,7 +60,36 @@ whole_congress_feels_model <- lm(other_congress_feels, formula=approve~your_cong
 summary(whole_congress_feels_model)
 ```
 
-  As we would exp
+  As we would expect the approval rate of how you view your congress does indeed corelate with the approval rate of the entire congress to test this we will again make test and train models, but this time we will use cross validation techniques.
+  
+  First to make life much easier we are going to combine our two approval ratings into one tibble.
+```{r}
+approval_all <- tibble(poll_date=other_congress_feels$poll_date, other_congress_approval=other_congress_feels$approve, your_congress_approval=your_congress_feels$approve)
+```
+
+  Now that we have created our new tibble we can move forward with our new model.
+```{r}
+set.seed(148)
+
+sampling <- createDataPartition(approval_all$other_congress_approval, p = 0.70, list = FALSE)
+
+train <- approval_all[sampling, ]
+test <- approval_all[-sampling, ]
+
+approval_model <- lm(data=train, formula = other_congress_approval ~ your_congress_approval)
+approval_prediction <- predict(approval_model, test)
+ggplot(data=test, aes(x=approval_prediction, y=other_congress_approval)) + geom_point()
+```
+
+  Now that we have our model layed out on our graph lets check to see how well it predicted the approval rating.
+  
+```{r}
+R2(approval_prediction, test$other_congress_approval)
+MAE(approval_prediction, test$other_congress_approval)
+RMSE(approval_prediction, test$other_congress_approval)
+```
+
+  The R2 value is telling us that we have an accuracy of about 74% when testing. This is not to shabby with little data we have. It is better to have some data then no data.
 
 ## Closing time
 
@@ -68,7 +100,7 @@ summary(whole_congress_feels_model)
 * What qualities or events cause non-incumbents to have a low probability of winning. 
 * Being a midterm election, how much did the president's actions influence was the president in the elections.
 
-The question that we have came closer to answering is: As a nation, why do we continue to vote for the same politicians. Well by these polls it would show that people from the poll like their congress people. As of 2000 all the approval rates have been steadly dropping. People still approve of their congress person around the 50% mark, which makes sense since they voted for them.
+The question that we have come closer to answering is: As a nation, why do we continue to vote for the same politicians. Well, by these polls it would show that people from the poll, like their congress people more than other congress people. As of 2000, all the approval rates have been steadly dropping. People still approve of their congress person around 50%, which makes sense since they voted for them and need a majority to elect them.
 
 ### Why we should care
 
@@ -76,10 +108,14 @@ The question that we have came closer to answering is: As a nation, why do we co
   
 ### Operationalization
 
-  Now what are we going to do after all this reaserch. I would say the first thing we could think about doing is forming new parties, breaking the status quo of our stationary parties of old. They are growing old and rusty. In my opinion we should create three or four new parties, but that is not up to just me. Parties if they choose to exist are a gathering of people with similar goals and ideals. We have 329,064,917 people living in the USA and only about 23,191,876 in 1850. That is a lot of people that probably do not have the same exact opinions on how the federal government should be run.
+  Now what are we going to do after all this reaserch. I would say the first thing we could think about doing is forming new parties, breaking the status quo of our monolithic parties of old. In my opinion we should create three or four new parties, but that is not up to just me. Parties if they choose to exist are a gathering of people with similar goals and ideals. We have 329,064,917 people living in the USA and only about 23,191,876 in 1850. That is a lot of people that probably do not have the same exact opinions on how the federal government should be run.
   
 ### Social Impact
 
-  A negative social impact of this data shows that we don't like other peoples decisions on their congress person. This could work further to create a more of a devide between parties.
+  A negative social impact of this data shows that we don't like other peoples decisions on their congress person. This could work further to create a more of a devide between parties. This has already brough far fringe groups into the fray, but I would say that they would be very small parties and taking them out of main parties would be benifical to everyone.
+  
+## Conclusion
+
+  To further this research getting ahold of more congress approval polls with more dates would be benefical. We can also dig into more data sources to discover other reasons that people are voting and feeling the way they do about congress and other parts of government.
 
   
