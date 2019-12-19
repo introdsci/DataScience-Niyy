@@ -33,7 +33,7 @@ output: html_document
 ### Download packages
 
   First we will download necessary packages to recreate the data sets I will have and be investigating. We will be first installing the wonderful tidyverse. The tidyverse package will help us bring order too messed up data.
-```{r}
+```{r c1}
 # These three will import many of the commands we will use to clean our data
 # install.packages("tidyverse")
 library("tidyverse")
@@ -55,7 +55,7 @@ library("ggplot2")
   *[Rstudio download]("https://rstudio.com/products/rstudio/download/#download")
   
   Now were ready to move on to downloading the data.The line bellow will turn the data into R readable data.
-```{r}
+```{r c2}
 national_data <- read_csv("https://projects.fivethirtyeight.com/congress-model-2018/house_district_forecast.csv")
 ```
 
@@ -63,26 +63,26 @@ Looking over the data there are a few things we need to clean up. One of those i
 
 
 We also need to remove the models column. It is used specifically for the website that the data was pulled from. We will do this by selecting everything, but the model column.
-```{r}
+```{r c3}
 national_data <- select (national_data,-c(model))
 ```
 
 # Early Assessment and Visualization
 
   The first questions I had when looking at this data is: What were the probable vote shares of incumbent canadites. First I had to create a new table that was filled with just the incubents.
-```{r}
+```{r c4}
 incumbent_chances <- tibble(candidate=national_data$candidate[national_data$incumbent == TRUE], win_probability=national_data$win_probability[national_data$incumbent == TRUE], voteshare=national_data$voteshare[national_data$incumbent == TRUE])
 ```
 
   Next we will make a histograph, which shows use were the voteshares fall for the incumbents.
-```{r}
+```{r c5}
 filter(national_data, (incumbent == TRUE)) %>% ggplot(aes(voteshare)) + geom_histogram(bins = 100)
 ```
 
   This graph tells us a lot about the probability of incumbents faired in the last election. Many of them had above 50% of the vote shares. The real question though is what keeps them in office. Is it a lack of a better candidate or are they representinng their districts well.
 
   The next graph we will look at the non-incumbents. Since the probability of the incumbents is above fifty, the non-incumbent probability will be the latter half of that.
-```{r}
+```{r c6}
 filter(national_data, (incumbent == FALSE)) %>% ggplot(aes(voteshare)) + geom_histogram(bins = 100)
 ```
 
