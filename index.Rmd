@@ -21,5 +21,5 @@ Here we plan and devise our models. We also test one to see if it could be used 
 
 ### 3. Results and Operationalization
 
-Coming soon...
+After we have come all this way we will finally put some operationalization from what we have pulled from the data. [Part Three](deliverable3.html)
 
